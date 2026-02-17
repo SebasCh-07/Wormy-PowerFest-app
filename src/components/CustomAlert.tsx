@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { COLORS } from '../config/colors';
 
 interface CustomAlertProps {
   visible: boolean;
@@ -27,25 +28,25 @@ export function CustomAlert({
   const getIcon = () => {
     switch (type) {
       case 'success':
-        return <Ionicons name="checkmark-circle" size={64} color="#5FFBF1" />;
+        return <Ionicons name="checkmark-circle" size={64} color={COLORS.success.main} />;
       case 'error':
-        return <Ionicons name="close-circle" size={64} color="#B50095" />;
+        return <Ionicons name="close-circle" size={64} color={COLORS.error.main} />;
       case 'info':
-        return <Ionicons name="information-circle" size={64} color="#800080" />;
+        return <Ionicons name="information-circle" size={64} color={COLORS.primary.main} />;
       case 'confirm':
-        return <MaterialCommunityIcons name="help-circle" size={64} color="#800080" />;
+        return <MaterialCommunityIcons name="help-circle" size={64} color={COLORS.primary.main} />;
     }
   };
 
   const getIconBackground = () => {
     switch (type) {
       case 'success':
-        return '#E5FFFE';
+        return COLORS.success.light;
       case 'error':
-        return '#FFE5F3';
+        return COLORS.error.light;
       case 'info':
       case 'confirm':
-        return '#F5F0FF';
+        return COLORS.primary.lighter;
     }
   };
 
@@ -86,7 +87,7 @@ export function CustomAlert({
               style={styles.confirmButtonWrapper}
               activeOpacity={0.8}>
               <LinearGradient
-                colors={['#B50095', '#800080']}
+                colors={[COLORS.primary.main, COLORS.primary.dark]}
                 style={styles.confirmButton}>
                 <Text style={styles.confirmButtonText}>{confirmText}</Text>
               </LinearGradient>
@@ -101,25 +102,25 @@ export function CustomAlert({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(128, 0, 128, 0.7)',
+    backgroundColor: 'rgba(107, 15, 127, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   alertContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.neutral.white,
     borderRadius: 24,
     padding: 32,
     width: '100%',
     maxWidth: 400,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: COLORS.shadow.dark,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 16,
     borderWidth: 2,
-    borderColor: '#5FFBF1',
+    borderColor: COLORS.secondary.light,
   },
   iconContainer: {
     width: 100,
@@ -132,13 +133,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#B50095',
+    color: COLORS.primary.main,
     marginBottom: 12,
     textAlign: 'center',
   },
   message: {
     fontSize: 15,
-    color: '#800080',
+    color: COLORS.text.primary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 24,
@@ -155,22 +156,22 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     paddingVertical: 14,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: COLORS.neutral.gray100,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#E0E0E0',
+    borderColor: COLORS.neutral.gray300,
     alignItems: 'center',
   },
   cancelButtonText: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#800080',
+    color: COLORS.text.primary,
   },
   confirmButtonWrapper: {
     flex: 1,
     borderRadius: 12,
     overflow: 'hidden',
-    shadowColor: '#B50095',
+    shadowColor: COLORS.shadow.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -183,6 +184,6 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: COLORS.text.white,
   },
 });

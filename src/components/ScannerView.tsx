@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Mode, ScanResult } from '../types';
@@ -7,6 +7,7 @@ import { ResultBanner } from './ResultBanner';
 import { QRScanner } from './QRScanner';
 import { CustomAlert } from './CustomAlert';
 import { validateQR, registrarEntrada, registrarEntrega } from '../services/scanService';
+import { COLORS } from '../config/colors';
 
 interface ScannerViewProps {
   mode: Mode;
@@ -18,6 +19,11 @@ export function ScannerView({ mode, scans, onScan }: ScannerViewProps) {
   const [isScanning, setIsScanning] = useState(false);
   const [lastResult, setLastResult] = useState<ScanResult | null>(null);
   const [showCamera, setShowCamera] = useState(false);
+  
+  // Animaciones
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const spinnerRotate = useRef(new Animated.Value(0)).current;
   
   // Estados para los modales personalizados
   const [alertConfig, setAlertConfig] = useState<{
@@ -32,6 +38,46 @@ export function ScannerView({ mode, scans, onScan }: ScannerViewProps) {
     type: 'info',
     title: '',
     message: '',
+  });
+
+  // Animación de pulso continuo para el botón
+  useEffect(() => {
+    if (!isScanning) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.05,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }
+  }, [isScanning]);
+
+  // Animación del spinner cuando está escaneando
+  useEffect(() => {
+    if (isScanning) {
+      Animated.loop(
+        Animated.timing(spinnerRotate, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      spinnerRotate.setValue(0);
+    }
+  }, [isScanning]);
+
+  const spin = spinnerRotate.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
   });
 
   useEffect(() => {
@@ -201,7 +247,7 @@ export function ScannerView({ mode, scans, onScan }: ScannerViewProps) {
       <View style={styles.header}>
         <Text style={styles.headerSubtitle}>MODO ACTIVO</Text>
         <LinearGradient
-          colors={['#B50095', '#800080']}
+          colors={[COLORS.primary.main, COLORS.primary.dark]}
           style={styles.modeBadge}>
           <Text style={styles.modeLabel}>{getModeLabel(mode)}</Text>
         </LinearGradient>
@@ -209,38 +255,53 @@ export function ScannerView({ mode, scans, onScan }: ScannerViewProps) {
 
       {/* Scanner Area */}
       <View style={styles.scannerArea}>
-        <TouchableOpacity
-          onPress={handleScanPress}
-          disabled={isScanning}
-          activeOpacity={0.8}
-          style={styles.scannerButton}>
-          <View style={styles.scannerFrame}>
-            {/* Corner Accents */}
-            <View style={[styles.corner, styles.cornerTopLeft]} />
-            <View style={[styles.corner, styles.cornerTopRight]} />
-            <View style={[styles.corner, styles.cornerBottomLeft]} />
-            <View style={[styles.corner, styles.cornerBottomRight]} />
+        <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+          <TouchableOpacity
+            onPress={handleScanPress}
+            disabled={isScanning}
+            activeOpacity={0.8}
+            style={styles.scannerButton}>
+            <View style={styles.scannerFrame}>
+              {/* Corner Accents */}
+              <View style={[styles.corner, styles.cornerTopLeft]} />
+              <View style={[styles.corner, styles.cornerTopRight]} />
+              <View style={[styles.corner, styles.cornerBottomLeft]} />
+              <View style={[styles.corner, styles.cornerBottomRight]} />
 
-            {/* Center Content */}
-            <View style={styles.scannerContent}>
-              {isScanning ? (
-                <View style={styles.scanningState}>
-                  <View style={styles.spinner} />
-                  <Text style={styles.scanningText}>PROCESANDO...</Text>
-                </View>
-              ) : (
-                <View style={styles.idleState}>
-                  <LinearGradient
-                    colors={['#B50095', '#800080']}
-                    style={styles.cameraIcon}>
-                    <MaterialCommunityIcons name="qrcode-scan" size={40} color="#FFFFFF" />
-                  </LinearGradient>
-                  <Text style={styles.scanText}>TOCAR PARA ESCANEAR</Text>
-                </View>
-              )}
+              {/* Center Content */}
+              <View style={styles.scannerContent}>
+                {isScanning ? (
+                  <View style={styles.scanningState}>
+                    <Animated.View style={[styles.spinner, { transform: [{ rotate: spin }] }]}>
+                      <LinearGradient
+                        colors={[COLORS.primary.main, COLORS.secondary.main]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.spinnerGradient}
+                      />
+                    </Animated.View>
+                    <Text style={styles.scanningText}>PROCESANDO...</Text>
+                    <View style={styles.dotsContainer}>
+                      <View style={[styles.dot, styles.dotActive]} />
+                      <View style={[styles.dot, styles.dotActive]} />
+                      <View style={[styles.dot, styles.dotActive]} />
+                    </View>
+                  </View>
+                ) : (
+                  <View style={styles.idleState}>
+                    <LinearGradient
+                      colors={[COLORS.primary.main, COLORS.primary.dark]}
+                      style={styles.cameraIcon}>
+                      <MaterialCommunityIcons name="qrcode-scan" size={40} color={COLORS.neutral.white} />
+                    </LinearGradient>
+                    <Text style={styles.scanText}>TOCAR PARA ESCANEAR</Text>
+                    <Text style={styles.scanHint}>Presiona para activar la cámara</Text>
+                  </View>
+                )}
+              </View>
             </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
 
       {/* Result Area */}
@@ -279,18 +340,18 @@ export function ScannerView({ mode, scans, onScan }: ScannerViewProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.background.default,
   },
   header: {
     paddingVertical: 24,
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.background.default,
     borderBottomWidth: 2,
-    borderBottomColor: '#5FFBF1',
+    borderBottomColor: COLORS.secondary.light,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: '#800080',
+    color: COLORS.text.primary,
     textTransform: 'uppercase',
     letterSpacing: 2,
     marginBottom: 12,
@@ -300,7 +361,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,
-    shadowColor: '#B50095',
+    shadowColor: COLORS.shadow.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -309,13 +370,13 @@ const styles = StyleSheet.create({
   modeLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: COLORS.text.white,
     letterSpacing: -0.5,
   },
   scannerArea: {
     alignItems: 'center',
     paddingVertical: 32,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.background.default,
   },
   scannerButton: {
     width: 280,
@@ -324,14 +385,14 @@ const styles = StyleSheet.create({
   scannerFrame: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.neutral.white,
     borderRadius: 24,
     borderWidth: 3,
-    borderColor: '#5FFBF1',
+    borderColor: COLORS.secondary.light,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    shadowColor: '#5FFBF1',
+    shadowColor: COLORS.shadow.secondary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -341,7 +402,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 32,
     height: 32,
-    borderColor: '#B50095',
+    borderColor: COLORS.primary.main,
   },
   cornerTopLeft: {
     top: 16,
@@ -381,17 +442,34 @@ const styles = StyleSheet.create({
   spinner: {
     width: 64,
     height: 64,
-    borderWidth: 4,
-    borderColor: '#B50095',
-    borderTopColor: 'transparent',
     borderRadius: 32,
     marginBottom: 16,
+    overflow: 'hidden',
+  },
+  spinnerGradient: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 32,
   },
   scanningText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#B50095',
+    color: COLORS.primary.main,
     letterSpacing: 2,
+    marginBottom: 8,
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: COLORS.neutral.gray300,
+  },
+  dotActive: {
+    backgroundColor: COLORS.secondary.main,
   },
   idleState: {
     alignItems: 'center',
@@ -403,7 +481,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
-    shadowColor: '#B50095',
+    shadowColor: COLORS.shadow.primary,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 16,
@@ -412,8 +490,14 @@ const styles = StyleSheet.create({
   scanText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#800080',
+    color: COLORS.text.primary,
     letterSpacing: 2,
+    marginBottom: 4,
+  },
+  scanHint: {
+    fontSize: 11,
+    color: COLORS.text.primary,
+    opacity: 0.6,
   },
   resultArea: {
     marginBottom: 16,

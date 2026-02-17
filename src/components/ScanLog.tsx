@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { ScanResult } from '../types';
+import { COLORS } from '../config/colors';
 
 interface ScanLogProps {
   scans: ScanResult[];
@@ -13,7 +14,7 @@ export function ScanLog({ scans }: ScanLogProps) {
     return (
       <View style={styles.emptyState}>
         <View style={styles.emptyIcon}>
-          <MaterialCommunityIcons name="clipboard-text-outline" size={40} color="#800080" />
+          <MaterialCommunityIcons name="clipboard-text-outline" size={40} color={COLORS.text.primary} />
         </View>
         <Text style={styles.emptyText}>Sin escaneos hoy</Text>
         <Text style={styles.emptySubtext}>Los escaneos aparecerán aquí</Text>
@@ -54,154 +55,203 @@ export function ScanLog({ scans }: ScanLogProps) {
         const modeInfo = getModeInfo(scan.mode);
         
         return (
-          <View key={scan.id} style={styles.logItemWrapper}>
-            {isValid ? (
-              <LinearGradient
-                colors={['#FFFFFF', '#F0FFFE']}
-                style={[styles.logItem, styles.logItemValid]}>
-                {/* Header con icono y estado */}
-                <View style={styles.logItemHeader}>
-                  <View style={styles.leftSection}>
-                    <View style={styles.iconContainerValid}>
-                      {modeInfo.iconLib === 'Ionicons' ? (
-                        <Ionicons name={modeInfo.icon} size={24} color="#5FFBF1" />
-                      ) : (
-                        <MaterialCommunityIcons name={modeInfo.icon} size={24} color="#5FFBF1" />
-                      )}
-                    </View>
-                    <View style={styles.headerTextContainer}>
-                      <Text style={styles.modeLabel}>{modeInfo.label}</Text>
-                      <Text style={styles.modeDescription}>{modeInfo.description}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.statusBadgeValid}>
-                    <Ionicons name="checkmark-circle" size={20} color="#5FFBF1" />
-                    <Text style={styles.statusTextValid}>VÁLIDO</Text>
-                  </View>
-                </View>
-
-                {/* Divider */}
-                <View style={styles.divider} />
-
-                {/* Información del escaneo */}
-                <View style={styles.infoSection}>
-                  {scan.name && (
-                    <View style={styles.infoRow}>
-                      <View style={styles.infoIconContainer}>
-                        <Ionicons name="person" size={16} color="#800080" />
-                      </View>
-                      <View style={styles.infoTextContainer}>
-                        <Text style={styles.infoLabel}>Participante</Text>
-                        <Text style={styles.infoValue}>{scan.name}</Text>
-                      </View>
-                    </View>
-                  )}
-
-                  <View style={styles.infoRow}>
-                    <View style={styles.infoIconContainer}>
-                      <MaterialCommunityIcons name="qrcode" size={16} color="#800080" />
-                    </View>
-                    <View style={styles.infoTextContainer}>
-                      <Text style={styles.infoLabel}>Código QR</Text>
-                      <Text style={styles.infoValue} numberOfLines={1}>{scan.data}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.infoRow}>
-                    <View style={styles.infoIconContainer}>
-                      <Ionicons name="time-outline" size={16} color="#800080" />
-                    </View>
-                    <View style={styles.infoTextContainer}>
-                      <Text style={styles.infoLabel}>Hora de escaneo</Text>
-                      <Text style={styles.infoValue}>{scan.timestamp}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.infoRow}>
-                    <View style={styles.infoIconContainer}>
-                      <MaterialCommunityIcons name="counter" size={16} color="#800080" />
-                    </View>
-                    <View style={styles.infoTextContainer}>
-                      <Text style={styles.infoLabel}>Número de escaneo</Text>
-                      <Text style={styles.infoValue}>#{scans.length - index}</Text>
-                    </View>
-                  </View>
-                </View>
-              </LinearGradient>
-            ) : (
-              <LinearGradient
-                colors={['#FFFFFF', '#FFF0F8']}
-                style={[styles.logItem, styles.logItemInvalid]}>
-                {/* Header con icono y estado */}
-                <View style={styles.logItemHeader}>
-                  <View style={styles.leftSection}>
-                    <View style={styles.iconContainerInvalid}>
-                      <Ionicons name="close-circle" size={24} color="#B50095" />
-                    </View>
-                    <View style={styles.headerTextContainer}>
-                      <Text style={styles.modeLabelInvalid}>{modeInfo.label}</Text>
-                      <Text style={styles.modeDescriptionInvalid}>Error en validación</Text>
-                    </View>
-                  </View>
-                  <View style={styles.statusBadgeInvalid}>
-                    <Ionicons name="alert-circle" size={20} color="#B50095" />
-                    <Text style={styles.statusTextInvalid}>INVÁLIDO</Text>
-                  </View>
-                </View>
-
-                {/* Divider */}
-                <View style={styles.dividerInvalid} />
-
-                {/* Información del escaneo */}
-                <View style={styles.infoSection}>
-                  {scan.name && (
-                    <View style={styles.infoRow}>
-                      <View style={styles.infoIconContainer}>
-                        <Ionicons name="person" size={16} color="#800080" />
-                      </View>
-                      <View style={styles.infoTextContainer}>
-                        <Text style={styles.infoLabel}>Participante</Text>
-                        <Text style={styles.infoValue}>{scan.name}</Text>
-                      </View>
-                    </View>
-                  )}
-
-                  <View style={styles.infoRow}>
-                    <View style={styles.infoIconContainer}>
-                      <MaterialCommunityIcons name="qrcode" size={16} color="#800080" />
-                    </View>
-                    <View style={styles.infoTextContainer}>
-                      <Text style={styles.infoLabel}>Código QR</Text>
-                      <Text style={styles.infoValue} numberOfLines={1}>{scan.data}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.infoRow}>
-                    <View style={styles.infoIconContainer}>
-                      <Ionicons name="time-outline" size={16} color="#800080" />
-                    </View>
-                    <View style={styles.infoTextContainer}>
-                      <Text style={styles.infoLabel}>Hora de intento</Text>
-                      <Text style={styles.infoValue}>{scan.timestamp}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.infoRow}>
-                    <View style={styles.infoIconContainer}>
-                      <Ionicons name="warning-outline" size={16} color="#B50095" />
-                    </View>
-                    <View style={styles.infoTextContainer}>
-                      <Text style={styles.infoLabel}>Motivo</Text>
-                      <Text style={styles.infoValueError}>QR no válido o ya utilizado</Text>
-                    </View>
-                  </View>
-                </View>
-              </LinearGradient>
-            )}
-          </View>
+          <ScanLogItem 
+            key={scan.id}
+            scan={scan}
+            index={index}
+            totalScans={scans.length}
+            isValid={isValid}
+            modeInfo={modeInfo}
+          />
         );
       })}
     </View>
+  );
+}
+
+interface ScanLogItemProps {
+  scan: ScanResult;
+  index: number;
+  totalScans: number;
+  isValid: boolean;
+  modeInfo: any;
+}
+
+function ScanLogItem({ scan, index, totalScans, isValid, modeInfo }: ScanLogItemProps) {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 400,
+        delay: index * 50,
+        useNativeDriver: true,
+      }),
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        tension: 50,
+        friction: 8,
+        delay: index * 50,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  return (
+    <Animated.View 
+      style={[
+        styles.logItemWrapper,
+        {
+          opacity: fadeAnim,
+          transform: [{ translateX: slideAnim }],
+        },
+      ]}>
+      {isValid ? (
+        <LinearGradient
+          colors={[COLORS.neutral.white, COLORS.success.light]}
+          style={[styles.logItem, styles.logItemValid]}>
+          {/* Header con icono y estado */}
+          <View style={styles.logItemHeader}>
+            <View style={styles.leftSection}>
+              <View style={styles.iconContainerValid}>
+                {modeInfo.iconLib === 'Ionicons' ? (
+                  <Ionicons name={modeInfo.icon} size={24} color={COLORS.success.main} />
+                ) : (
+                  <MaterialCommunityIcons name={modeInfo.icon} size={24} color={COLORS.success.main} />
+                )}
+              </View>
+              <View style={styles.headerTextContainer}>
+                <Text style={styles.modeLabel}>{modeInfo.label}</Text>
+                <Text style={styles.modeDescription}>{modeInfo.description}</Text>
+              </View>
+            </View>
+            <View style={styles.statusBadgeValid}>
+              <Ionicons name="checkmark-circle" size={20} color={COLORS.success.main} />
+              <Text style={styles.statusTextValid}>VÁLIDO</Text>
+            </View>
+          </View>
+
+          {/* Divider */}
+          <View style={styles.divider} />
+
+          {/* Información del escaneo */}
+          <View style={styles.infoSection}>
+            {scan.name && (
+              <View style={styles.infoRow}>
+                <View style={styles.infoIconContainer}>
+                  <Ionicons name="person" size={16} color={COLORS.text.primary} />
+                </View>
+                <View style={styles.infoTextContainer}>
+                  <Text style={styles.infoLabel}>Participante</Text>
+                  <Text style={styles.infoValue}>{scan.name}</Text>
+                </View>
+              </View>
+            )}
+
+            <View style={styles.infoRow}>
+              <View style={styles.infoIconContainer}>
+                <MaterialCommunityIcons name="qrcode" size={16} color={COLORS.text.primary} />
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Código QR</Text>
+                <Text style={styles.infoValue} numberOfLines={1}>{scan.data}</Text>
+              </View>
+            </View>
+
+            <View style={styles.infoRow}>
+              <View style={styles.infoIconContainer}>
+                <Ionicons name="time-outline" size={16} color={COLORS.text.primary} />
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Hora de escaneo</Text>
+                <Text style={styles.infoValue}>{scan.timestamp}</Text>
+              </View>
+            </View>
+
+            <View style={styles.infoRow}>
+              <View style={styles.infoIconContainer}>
+                <MaterialCommunityIcons name="counter" size={16} color={COLORS.text.primary} />
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Número de escaneo</Text>
+                <Text style={styles.infoValue}>#{totalScans - index}</Text>
+              </View>
+            </View>
+          </View>
+        </LinearGradient>
+      ) : (
+        <LinearGradient
+          colors={[COLORS.neutral.white, COLORS.error.light]}
+          style={[styles.logItem, styles.logItemInvalid]}>
+          {/* Header con icono y estado */}
+          <View style={styles.logItemHeader}>
+            <View style={styles.leftSection}>
+              <View style={styles.iconContainerInvalid}>
+                <Ionicons name="close-circle" size={24} color={COLORS.error.main} />
+              </View>
+              <View style={styles.headerTextContainer}>
+                <Text style={styles.modeLabelInvalid}>{modeInfo.label}</Text>
+                <Text style={styles.modeDescriptionInvalid}>Error en validación</Text>
+              </View>
+            </View>
+            <View style={styles.statusBadgeInvalid}>
+              <Ionicons name="alert-circle" size={20} color={COLORS.error.main} />
+              <Text style={styles.statusTextInvalid}>INVÁLIDO</Text>
+            </View>
+          </View>
+
+          {/* Divider */}
+          <View style={styles.dividerInvalid} />
+
+          {/* Información del escaneo */}
+          <View style={styles.infoSection}>
+            {scan.name && (
+              <View style={styles.infoRow}>
+                <View style={styles.infoIconContainer}>
+                  <Ionicons name="person" size={16} color="#800080" />
+                </View>
+                <View style={styles.infoTextContainer}>
+                  <Text style={styles.infoLabel}>Participante</Text>
+                  <Text style={styles.infoValue}>{scan.name}</Text>
+                </View>
+              </View>
+            )}
+
+            <View style={styles.infoRow}>
+              <View style={styles.infoIconContainer}>
+                <MaterialCommunityIcons name="qrcode" size={16} color="#800080" />
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Código QR</Text>
+                <Text style={styles.infoValue} numberOfLines={1}>{scan.data}</Text>
+              </View>
+            </View>
+
+            <View style={styles.infoRow}>
+              <View style={styles.infoIconContainer}>
+                <Ionicons name="time-outline" size={16} color="#800080" />
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Hora de intento</Text>
+                <Text style={styles.infoValue}>{scan.timestamp}</Text>
+              </View>
+            </View>
+
+            <View style={styles.infoRow}>
+              <View style={styles.infoIconContainer}>
+                <Ionicons name="warning-outline" size={16} color={COLORS.error.main} />
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Motivo</Text>
+                <Text style={styles.infoValueError}>QR no válido o ya utilizado</Text>
+              </View>
+            </View>
+          </View>
+        </LinearGradient>
+      )}
+    </Animated.View>
   );
 }
 
@@ -217,20 +267,20 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 16,
-    backgroundColor: '#5FFBF1',
+    backgroundColor: COLORS.secondary.light,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
   },
   emptyText: {
     fontSize: 16,
-    color: '#800080',
+    color: COLORS.text.primary,
     fontWeight: '600',
     marginBottom: 4,
   },
   emptySubtext: {
     fontSize: 12,
-    color: '#800080',
+    color: COLORS.text.primary,
     opacity: 0.6,
   },
   logItemWrapper: {
@@ -248,12 +298,12 @@ const styles = StyleSheet.create({
   },
   logItemValid: {
     borderWidth: 2,
-    borderColor: '#5FFBF1',
+    borderColor: COLORS.success.border,
     borderRadius: 16,
   },
   logItemInvalid: {
     borderWidth: 2,
-    borderColor: '#B50095',
+    borderColor: COLORS.error.border,
     borderRadius: 16,
   },
   logItemHeader: {
@@ -271,7 +321,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: '#5FFBF1',
+    backgroundColor: COLORS.success.main,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -280,7 +330,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: '#FFE5F3',
+    backgroundColor: COLORS.error.light,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -291,68 +341,68 @@ const styles = StyleSheet.create({
   modeLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#800080',
+    color: COLORS.text.primary,
     marginBottom: 2,
   },
   modeLabelInvalid: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#B50095',
+    color: COLORS.error.main,
     marginBottom: 2,
   },
   modeDescription: {
     fontSize: 12,
-    color: '#800080',
+    color: COLORS.text.primary,
     opacity: 0.7,
   },
   modeDescriptionInvalid: {
     fontSize: 12,
-    color: '#B50095',
+    color: COLORS.error.main,
     opacity: 0.7,
   },
   statusBadgeValid: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E5FFFE',
+    backgroundColor: COLORS.success.light,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#5FFBF1',
+    borderColor: COLORS.success.border,
   },
   statusBadgeInvalid: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFE5F3',
+    backgroundColor: COLORS.error.light,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#B50095',
+    borderColor: COLORS.error.border,
   },
   statusTextValid: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#5FFBF1',
+    color: COLORS.success.main,
     marginLeft: 4,
     letterSpacing: 0.5,
   },
   statusTextInvalid: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#B50095',
+    color: COLORS.error.main,
     marginLeft: 4,
     letterSpacing: 0.5,
   },
   divider: {
     height: 1,
-    backgroundColor: '#5FFBF1',
+    backgroundColor: COLORS.success.main,
     marginBottom: 12,
     opacity: 0.3,
   },
   dividerInvalid: {
     height: 1,
-    backgroundColor: '#B50095',
+    backgroundColor: COLORS.error.main,
     marginBottom: 12,
     opacity: 0.3,
   },
@@ -367,7 +417,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: COLORS.neutral.gray100,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
@@ -377,7 +427,7 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 11,
-    color: '#800080',
+    color: COLORS.text.primary,
     opacity: 0.6,
     marginBottom: 2,
     textTransform: 'uppercase',
@@ -385,13 +435,13 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontSize: 14,
-    color: '#800080',
+    color: COLORS.text.primary,
     fontWeight: '600',
     fontFamily: 'monospace',
   },
   infoValueError: {
     fontSize: 14,
-    color: '#B50095',
+    color: COLORS.error.main,
     fontWeight: '600',
   },
 });
