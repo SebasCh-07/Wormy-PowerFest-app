@@ -32,7 +32,7 @@ export function CustomAlert({
       case 'error':
         return <Ionicons name="close-circle" size={64} color={COLORS.error.main} />;
       case 'info':
-        return <Ionicons name="information-circle" size={64} color={COLORS.primary.main} />;
+        return <Ionicons name="ban" size={64} color={COLORS.primary.main} />;
       case 'confirm':
         return <MaterialCommunityIcons name="help-circle" size={64} color={COLORS.primary.main} />;
     }

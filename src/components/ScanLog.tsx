@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScanResult } from '../types';
 import { COLORS } from '../config/colors';
 
@@ -116,143 +115,41 @@ function ScanLogItem({ scan, index, totalScans, isValid, modeInfo }: ScanLogItem
         },
       ]}>
       {isValid ? (
-        <LinearGradient
-          colors={[COLORS.neutral.white, COLORS.success.light]}
-          style={[styles.logItem, styles.logItemValid]}>
-          {/* Header con icono y estado */}
-          <View style={styles.logItemHeader}>
-            <View style={styles.leftSection}>
-              <View style={styles.iconContainerValid}>
-                <Ionicons name="checkmark" size={32} color={COLORS.neutral.white} />
-              </View>
-              <View style={styles.headerTextContainer}>
-                <Text style={styles.modeLabel}>{modeInfo.label}</Text>
-                <Text style={styles.modeDescription}>{modeInfo.description}</Text>
-              </View>
-            </View>
-            <View style={styles.statusBadgeValid}>
+        <View style={[styles.logItem, styles.logItemValid]}>
+          <View style={styles.compactContent}>
+            <View style={styles.iconContainerValidCompact}>
               <Ionicons name="checkmark-circle" size={20} color={COLORS.success.main} />
-              <Text style={styles.statusTextValid}>VÁLIDO</Text>
             </View>
-          </View>
-
-          {/* Divider */}
-          <View style={styles.divider} />
-
-          {/* Información del escaneo */}
-          <View style={styles.infoSection}>
-            {scan.name && (
-              <View style={styles.infoRow}>
-                <View style={styles.infoIconContainer}>
-                  <Ionicons name="person" size={16} color={COLORS.text.primary} />
-                </View>
-                <View style={styles.infoTextContainer}>
-                  <Text style={styles.infoLabel}>Participante</Text>
-                  <Text style={styles.infoValue}>{scan.name}</Text>
-                </View>
-              </View>
-            )}
-
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconContainer}>
-                <MaterialCommunityIcons name="qrcode" size={16} color={COLORS.text.primary} />
-              </View>
-              <View style={styles.infoTextContainer}>
-                <Text style={styles.infoLabel}>Código QR</Text>
-                <Text style={styles.infoValue} numberOfLines={1}>{scan.data}</Text>
-              </View>
-            </View>
-
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconContainer}>
-                <Ionicons name="time-outline" size={16} color={COLORS.text.primary} />
-              </View>
-              <View style={styles.infoTextContainer}>
-                <Text style={styles.infoLabel}>Hora de escaneo</Text>
-                <Text style={styles.infoValue}>{scan.timestamp}</Text>
-              </View>
-            </View>
-
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconContainer}>
-                <MaterialCommunityIcons name="counter" size={16} color={COLORS.text.primary} />
-              </View>
-              <View style={styles.infoTextContainer}>
-                <Text style={styles.infoLabel}>Número de escaneo</Text>
-                <Text style={styles.infoValue}>#{totalScans - index}</Text>
+            <View style={styles.infoContent}>
+              <Text style={styles.nameText} numberOfLines={1}>
+                {scan.name || 'Participante'}
+              </Text>
+              <View style={styles.metaRow}>
+                <Text style={styles.modeText}>{modeInfo.label}</Text>
+                <Text style={styles.separator}>•</Text>
+                <Text style={styles.timeText}>{scan.timestamp}</Text>
               </View>
             </View>
           </View>
-        </LinearGradient>
+        </View>
       ) : (
-        <LinearGradient
-          colors={[COLORS.neutral.white, COLORS.error.light]}
-          style={[styles.logItem, styles.logItemInvalid]}>
-          {/* Header con icono y estado */}
-          <View style={styles.logItemHeader}>
-            <View style={styles.leftSection}>
-              <View style={styles.iconContainerInvalid}>
-                <Ionicons name="close-circle" size={24} color={COLORS.error.main} />
-              </View>
-              <View style={styles.headerTextContainer}>
-                <Text style={styles.modeLabelInvalid}>{modeInfo.label}</Text>
-                <Text style={styles.modeDescriptionInvalid}>Error en validación</Text>
-              </View>
+        <View style={[styles.logItem, styles.logItemInvalid]}>
+          <View style={styles.compactContent}>
+            <View style={styles.iconContainerInvalidCompact}>
+              <Ionicons name="close-circle" size={20} color={COLORS.error.main} />
             </View>
-            <View style={styles.statusBadgeInvalid}>
-              <Ionicons name="alert-circle" size={20} color={COLORS.error.main} />
-              <Text style={styles.statusTextInvalid}>INVÁLIDO</Text>
-            </View>
-          </View>
-
-          {/* Divider */}
-          <View style={styles.dividerInvalid} />
-
-          {/* Información del escaneo */}
-          <View style={styles.infoSection}>
-            {scan.name && (
-              <View style={styles.infoRow}>
-                <View style={styles.infoIconContainer}>
-                  <Ionicons name="person" size={16} color="#800080" />
-                </View>
-                <View style={styles.infoTextContainer}>
-                  <Text style={styles.infoLabel}>Participante</Text>
-                  <Text style={styles.infoValue}>{scan.name}</Text>
-                </View>
-              </View>
-            )}
-
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconContainer}>
-                <MaterialCommunityIcons name="qrcode" size={16} color="#800080" />
-              </View>
-              <View style={styles.infoTextContainer}>
-                <Text style={styles.infoLabel}>Código QR</Text>
-                <Text style={styles.infoValue} numberOfLines={1}>{scan.data}</Text>
-              </View>
-            </View>
-
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconContainer}>
-                <Ionicons name="time-outline" size={16} color="#800080" />
-              </View>
-              <View style={styles.infoTextContainer}>
-                <Text style={styles.infoLabel}>Hora de intento</Text>
-                <Text style={styles.infoValue}>{scan.timestamp}</Text>
-              </View>
-            </View>
-
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconContainer}>
-                <Ionicons name="warning-outline" size={16} color={COLORS.error.main} />
-              </View>
-              <View style={styles.infoTextContainer}>
-                <Text style={styles.infoLabel}>Motivo</Text>
-                <Text style={styles.infoValueError}>QR no válido o ya utilizado</Text>
+            <View style={styles.infoContent}>
+              <Text style={styles.nameTextInvalid} numberOfLines={1}>
+                {scan.name || 'Error de escaneo'}
+              </Text>
+              <View style={styles.metaRow}>
+                <Text style={styles.modeTextInvalid}>{modeInfo.label}</Text>
+                <Text style={styles.separatorInvalid}>•</Text>
+                <Text style={styles.timeTextInvalid}>{scan.timestamp}</Text>
               </View>
             </View>
           </View>
-        </LinearGradient>
+        </View>
       )}
     </Animated.View>
   );
@@ -287,164 +184,104 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   logItemWrapper: {
-    marginBottom: 16,
-    borderRadius: 16,
+    marginBottom: 12,
+    borderRadius: 12,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   logItem: {
-    padding: 16,
+    backgroundColor: COLORS.neutral.white,
+    padding: 12,
   },
   logItemValid: {
-    borderWidth: 2,
-    borderColor: COLORS.success.border,
-    borderRadius: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: COLORS.success.main,
   },
   logItemInvalid: {
-    borderWidth: 2,
-    borderColor: COLORS.error.border,
-    borderRadius: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: COLORS.error.main,
   },
-  logItemHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  leftSection: {
+  compactContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
   },
-  iconContainerValid: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: COLORS.success.main,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  iconContainerInvalid: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: COLORS.error.light,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  headerTextContainer: {
-    flex: 1,
-  },
-  modeLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: COLORS.text.primary,
-    marginBottom: 2,
-  },
-  modeLabelInvalid: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: COLORS.error.main,
-    marginBottom: 2,
-  },
-  modeDescription: {
-    fontSize: 12,
-    color: COLORS.text.primary,
-    opacity: 0.7,
-  },
-  modeDescriptionInvalid: {
-    fontSize: 12,
-    color: COLORS.error.main,
-    opacity: 0.7,
-  },
-  statusBadgeValid: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  iconContainerValidCompact: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: COLORS.success.light,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: COLORS.success.border,
-  },
-  statusBadgeInvalid: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.error.light,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: COLORS.error.border,
-  },
-  statusTextValid: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: COLORS.success.main,
-    marginLeft: 4,
-    letterSpacing: 0.5,
-  },
-  statusTextInvalid: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: COLORS.error.main,
-    marginLeft: 4,
-    letterSpacing: 0.5,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: COLORS.success.main,
-    marginBottom: 12,
-    opacity: 0.3,
-  },
-  dividerInvalid: {
-    height: 1,
-    backgroundColor: COLORS.error.main,
-    marginBottom: 12,
-    opacity: 0.3,
-  },
-  infoSection: {
-    gap: 10,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  infoIconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: COLORS.neutral.gray100,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    marginRight: 12,
   },
-  infoTextContainer: {
+  iconContainerInvalidCompact: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: COLORS.error.light,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  infoContent: {
     flex: 1,
   },
-  infoLabel: {
-    fontSize: 11,
+  nameText: {
+    fontSize: 15,
+    fontWeight: '600',
     color: COLORS.text.primary,
-    opacity: 0.6,
-    marginBottom: 2,
+    marginBottom: 4,
+  },
+  nameTextInvalid: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.error.main,
+    marginBottom: 4,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  modeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: COLORS.success.main,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
-  infoValue: {
-    fontSize: 14,
-    color: COLORS.text.primary,
+  modeTextInvalid: {
+    fontSize: 12,
     fontWeight: '600',
+    color: COLORS.error.main,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  separator: {
+    fontSize: 12,
+    color: COLORS.text.primary,
+    opacity: 0.4,
+    marginHorizontal: 6,
+  },
+  separatorInvalid: {
+    fontSize: 12,
+    color: COLORS.error.main,
+    opacity: 0.4,
+    marginHorizontal: 6,
+  },
+  timeText: {
+    fontSize: 12,
+    color: COLORS.text.primary,
+    opacity: 0.7,
     fontFamily: 'monospace',
   },
-  infoValueError: {
-    fontSize: 14,
+  timeTextInvalid: {
+    fontSize: 12,
     color: COLORS.error.main,
-    fontWeight: '600',
+    opacity: 0.7,
+    fontFamily: 'monospace',
   },
 });
