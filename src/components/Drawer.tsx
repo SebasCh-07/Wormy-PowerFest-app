@@ -88,6 +88,13 @@ export function Drawer({
       iconLibrary: 'MaterialCommunityIcons',
       description: 'Registro de entrega'
     },
+    { 
+      id: 'sorteo', 
+      label: 'SORTEO', 
+      iconName: 'gift-outline',
+      iconLibrary: 'Ionicons',
+      description: 'Participación en sorteo'
+    },
   ];
 
   return (

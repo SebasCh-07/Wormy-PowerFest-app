@@ -38,6 +38,13 @@ export function ScanLog({ scans }: ScanLogProps) {
           iconLib: 'MaterialCommunityIcons' as const,
           description: 'Pasaporte entregado',
         };
+      case 'sorteo':
+        return {
+          label: 'SORTEO',
+          icon: 'gift' as const,
+          iconLib: 'Ionicons' as const,
+          description: 'Participación registrada',
+        };
       default:
         return {
           label: mode.toUpperCase(),

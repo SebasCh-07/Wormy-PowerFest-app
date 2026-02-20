@@ -24,11 +24,13 @@ export function HistoryView({ scans }: HistoryViewProps) {
   const invalidScans = scans.filter(s => s.status === 'invalid').length;
   const entradaScans = scans.filter(s => s.mode === 'entrada').length;
   const entregaScans = scans.filter(s => s.mode === 'entrega').length;
+  const sorteoScans = scans.filter(s => s.mode === 'sorteo').length;
 
   const filters: Array<{ id: Mode | 'all'; label: string; icon: string; iconLib: 'Ionicons' | 'MaterialCommunityIcons' }> = [
     { id: 'all', label: 'TODOS', icon: 'apps', iconLib: 'Ionicons' },
     { id: 'entrada', label: 'ENTRADA', icon: 'enter-outline', iconLib: 'Ionicons' },
     { id: 'entrega', label: 'ENTREGA', icon: 'clipboard-text-outline', iconLib: 'MaterialCommunityIcons' },
+    { id: 'sorteo', label: 'SORTEO', icon: 'gift-outline', iconLib: 'Ionicons' },
   ];
 
   return (

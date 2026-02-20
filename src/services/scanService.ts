@@ -13,8 +13,10 @@ export interface ValidationResponse {
       entrada: boolean;
       entrega: boolean;
       completo: boolean;
+      sorteo: boolean;
     };
     can_scan: boolean;
+    eligible_for_sorteo?: boolean;
     message: string;
   };
   error?: {
@@ -67,9 +69,11 @@ export interface StatsResponse {
       entrada: number;
       entrega: number;
       completo: number;
+      sorteo: number;
     };
     valid_scans: number;
     invalid_scans: number;
+    sorteo_participants?: number;
     last_updated: string;
   };
   error?: {
@@ -81,7 +85,7 @@ export interface StatsResponse {
 // 1. Validar QR antes de escanear
 export const validateQR = async (
   qrCode: string,
-  mode: 'entrada' | 'entrega' | 'completo'
+  mode: 'entrada' | 'entrega' | 'completo' | 'sorteo'
 ): Promise<ValidationResponse> => {
   try {
     const response = await fetch(`${API_URL}/validate`, {
@@ -229,6 +233,35 @@ export const getStats = async (): Promise<StatsResponse> => {
     return data;
   } catch (error) {
     console.error('Error fetching stats:', error);
+    return {
+      success: false,
+      error: {
+        code: 'NETWORK_ERROR',
+        message: 'No se pudo conectar con el servidor',
+      },
+    };
+  }
+};
+
+// 7. Registrar participación en sorteo
+export const registrarSorteo = async (qrCode: string): Promise<ScanResponse> => {
+  try {
+    const response = await fetch(`${API_URL}/sorteo`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        qr_code: qrCode,
+        scanned_at: new Date().toISOString(),
+        device_id: API_CONFIG.DEVICE_ID,
+      }),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error registering sorteo:', error);
     return {
       success: false,
       error: {

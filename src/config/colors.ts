@@ -16,6 +16,13 @@ export const COLORS = {
     lighter: '#FEF3C7',
   },
   
+  // Sorteo (dorado brillante)
+  sorteo: {
+    main: '#FFB703',
+    light: '#FFF3CD',
+    border: '#FCD34D',
+  },
+  
   // Estados
   success: {
     main: '#10B981',
