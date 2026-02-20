@@ -7,7 +7,7 @@ import { ResultBanner } from './ResultBanner';
 import { QRScanner } from './QRScanner';
 import { CustomAlert } from './CustomAlert';
 import { AnimatedBackground } from './AnimatedBackground';
-import { validateQR, registrarEntrada, registrarEntrega, registrarSorteo } from '../services/scanService';
+import { validateQR, registrarEntrega, registrarSorteo } from '../services/scanService';
 import { COLORS } from '../config/colors';
 
 interface ScannerViewProps {
@@ -133,13 +133,9 @@ export function ScannerView({ mode, scans, onScan }: ScannerViewProps) {
       
       if (!participant.can_scan) {
         // Ya está registrado
-        if (mode === 'entrada' && participant.status.entrada) {
-          alertTitle = 'Entrada Ya Registrada';
-          alertMessage = `${participant.name}\n\nEsta persona ya registró su entrada al evento anteriormente.`;
-          alertType = 'info';
-        } else if (mode === 'entrega' && participant.status.entrega) {
-          alertTitle = 'Pasaporte Ya Entregado';
-          alertMessage = `${participant.name}\n\nEsta persona ya recibió su pasaporte anteriormente.`;
+        if (mode === 'entrega' && participant.status.entrega) {
+          alertTitle = 'Ya Registrado';
+          alertMessage = `${participant.name}\n\nEsta persona ya registró su entrada y recibió su pasaporte anteriormente.`;
           alertType = 'info';
         } else if (mode === 'sorteo' && participant.status.sorteo) {
           alertTitle = 'Ya Participando en Sorteo';
@@ -151,10 +147,8 @@ export function ScannerView({ mode, scans, onScan }: ScannerViewProps) {
       } else {
         // Puede escanear
         let actionText = '';
-        if (mode === 'entrada') {
-          actionText = 'registrar la entrada';
-        } else if (mode === 'entrega') {
-          actionText = 'registrar la entrega del pasaporte';
+        if (mode === 'entrega') {
+          actionText = 'registrar la entrada y entrega del pasaporte';
         } else if (mode === 'sorteo') {
           actionText = 'registrar la participación en sorteo';
         }
@@ -193,9 +187,7 @@ export function ScannerView({ mode, scans, onScan }: ScannerViewProps) {
       let result;
 
       // Registrar según el modo seleccionado
-      if (mode === 'entrada') {
-        result = await registrarEntrada(qrCode);
-      } else if (mode === 'entrega') {
+      if (mode === 'entrega') {
         result = await registrarEntrega(qrCode);
       } else if (mode === 'sorteo') {
         result = await registrarSorteo(qrCode);
@@ -268,10 +260,8 @@ export function ScannerView({ mode, scans, onScan }: ScannerViewProps) {
 
   const getModeLabel = (m: Mode) => {
     switch (m) {
-      case 'entrada':
-        return 'CONTROL DE ENTRADA';
       case 'entrega':
-        return 'ENTREGA DE PASAPORTE';
+        return 'ENTRADA Y ENTREGA';
       case 'sorteo':
         return 'REGISTRO DE SORTEO';
       default:

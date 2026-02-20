@@ -75,18 +75,11 @@ export function Drawer({
     description: string;
   }[] = [
     { 
-      id: 'entrada', 
-      label: 'ENTRADA', 
-      iconName: 'enter-outline',
-      iconLibrary: 'Ionicons',
-      description: 'Control de acceso al evento'
-    },
-    { 
       id: 'entrega', 
-      label: 'ENTREGA DE PASAPORTE', 
+      label: 'ENTRADA Y ENTREGA', 
       iconName: 'clipboard-text-outline',
       iconLibrary: 'MaterialCommunityIcons',
-      description: 'Registro de entrega'
+      description: 'Registro de entrada y pasaporte'
     },
     { 
       id: 'sorteo', 

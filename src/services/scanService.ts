@@ -85,7 +85,7 @@ export interface StatsResponse {
 // 1. Validar QR antes de escanear
 export const validateQR = async (
   qrCode: string,
-  mode: 'entrada' | 'entrega' | 'completo' | 'sorteo'
+  mode: 'entrega' | 'completo' | 'sorteo'
 ): Promise<ValidationResponse> => {
   try {
     const response = await fetch(`${API_URL}/validate`, {
@@ -113,36 +113,7 @@ export const validateQR = async (
   }
 };
 
-// 2. Registrar entrada
-export const registrarEntrada = async (qrCode: string): Promise<ScanResponse> => {
-  try {
-    const response = await fetch(`${API_URL}/entrada`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        qr_code: qrCode,
-        scanned_at: new Date().toISOString(),
-        device_id: API_CONFIG.DEVICE_ID,
-      }),
-    });
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error registering entrada:', error);
-    return {
-      success: false,
-      error: {
-        code: 'NETWORK_ERROR',
-        message: 'No se pudo conectar con el servidor',
-      },
-    };
-  }
-};
-
-// 3. Registrar entrega de pasaporte
+// 2. Registrar entrega de pasaporte (incluye entrada automáticamente)
 export const registrarEntrega = async (qrCode: string): Promise<ScanResponse> => {
   try {
     const response = await fetch(`${API_URL}/entrega`, {
@@ -171,7 +142,7 @@ export const registrarEntrega = async (qrCode: string): Promise<ScanResponse> =>
   }
 };
 
-// 4. Registrar pasaporte completo
+// 3. Registrar pasaporte completo
 export const registrarCompleto = async (qrCode: string): Promise<ScanResponse> => {
   try {
     const response = await fetch(`${API_URL}/completo`, {
@@ -200,7 +171,7 @@ export const registrarCompleto = async (qrCode: string): Promise<ScanResponse> =
   }
 };
 
-// 5. Obtener historial
+// 4. Obtener historial
 export const getHistory = async (
   mode?: string,
   limit: number = 50
@@ -225,7 +196,7 @@ export const getHistory = async (
   }
 };
 
-// 6. Obtener estadísticas
+// 5. Obtener estadísticas
 export const getStats = async (): Promise<StatsResponse> => {
   try {
     const response = await fetch(`${API_URL}/stats`);
@@ -243,7 +214,7 @@ export const getStats = async (): Promise<StatsResponse> => {
   }
 };
 
-// 7. Registrar participación en sorteo
+// 6. Registrar participación en sorteo
 export const registrarSorteo = async (qrCode: string): Promise<ScanResponse> => {
   try {
     const response = await fetch(`${API_URL}/sorteo`, {

@@ -1,4 +1,4 @@
-export type Mode = 'entrada' | 'entrega' | 'sorteo';
+export type Mode = 'entrega' | 'sorteo';
 
 export interface ScanResult {
   id: string;
