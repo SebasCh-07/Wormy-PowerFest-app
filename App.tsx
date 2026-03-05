@@ -5,12 +5,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Drawer } from './src/components/Drawer';
 import { ScannerView } from './src/components/ScannerView';
-import { HistoryView } from './src/components/HistoryView';
+import { StatsView } from './src/components/StatsView';
 import { AnimatedMenuButton } from './src/components/AnimatedMenuButton';
 import { Mode, ScanResult } from './src/types';
 import { COLORS } from './src/config/colors';
 
-type ViewType = 'scanner' | 'history';
+type ViewType = 'scanner' | 'stats';
 
 export default function App() {
   const [activeMode, setActiveMode] = useState<Mode | null>(null);
@@ -113,8 +113,8 @@ export default function App() {
     setDrawerOpen(false);
   };
 
-  const handleViewHistory = () => {
-    setActiveView('history');
+  const handleViewStats = () => {
+    setActiveView('stats');
     setDrawerOpen(false);
   };
 
@@ -145,8 +145,8 @@ export default function App() {
 
         {/* Main Content */}
         <View style={styles.main}>
-          {activeView === 'history' ? (
-            <HistoryView scans={scans} />
+          {activeView === 'stats' ? (
+            <StatsView />
           ) : activeMode ? (
             <ScannerView
               mode={activeMode}
@@ -241,7 +241,7 @@ export default function App() {
           onClose={() => setDrawerOpen(false)}
           activeMode={activeMode}
           onSelectMode={handleSelectMode}
-          onViewHistory={handleViewHistory}
+          onViewStats={handleViewStats}
         />
       </SafeAreaView>
     </SafeAreaProvider>

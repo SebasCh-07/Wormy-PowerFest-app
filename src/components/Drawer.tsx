@@ -23,7 +23,7 @@ interface DrawerProps {
   onClose: () => void;
   activeMode: Mode | null;
   onSelectMode: (mode: Mode) => void;
-  onViewHistory: () => void;
+  onViewStats: () => void;
 }
 
 export function Drawer({
@@ -31,7 +31,7 @@ export function Drawer({
   onClose,
   activeMode,
   onSelectMode,
-  onViewHistory,
+  onViewStats,
 }: DrawerProps) {
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -233,7 +233,7 @@ export function Drawer({
             {/* Sección: Otras Opciones */}
             <Text style={styles.sectionTitle}>OTRAS OPCIONES</Text>
 
-            {/* Opción de Historial */}
+            {/* Opción de Estadísticas */}
             <Animated.View
               style={[
                 styles.menuItemWrapper,
@@ -250,17 +250,17 @@ export function Drawer({
                 },
               ]}>
               <TouchableOpacity
-                onPress={onViewHistory}
+                onPress={onViewStats}
                 activeOpacity={0.7}
                 style={styles.menuItemContainer}>
                 <View style={styles.menuItemInactive}>
                   <View style={styles.menuItemLeft}>
                     <View style={styles.iconContainerInactive}>
-                      <MaterialCommunityIcons name="history" size={28} color="#800080" />
+                      <MaterialCommunityIcons name="chart-box" size={28} color="#800080" />
                     </View>
                     <View style={styles.textContainer}>
-                      <Text style={styles.menuItemText}>HISTORIAL</Text>
-                      <Text style={styles.description}>Ver todos los escaneos</Text>
+                      <Text style={styles.menuItemText}>ESTADÍSTICAS</Text>
+                      <Text style={styles.description}>Ver métricas en tiempo real</Text>
                     </View>
                   </View>
                   <Ionicons name="chevron-forward" size={24} color="#FCD34D" />
